@@ -1,4 +1,4 @@
-#pragma once
+#if defined(NVIDIA)
 
 //A (very small) subset of the opencl 2.0  atomics for Nvidia. 
 //Won't work for Fermi or earlier architectures.
@@ -31,7 +31,7 @@ int atomic_fetch_add_explicit(__global volatile atomic_int* target, int operand,
 }
 
 //This is atomic_store_explicit(v,v, memory_order_release, memory_scope_device
-void atomic_store_explicit(__global volatile atomic_int* target, int val, const memory_order mo, const memory_scope ms) {
+__forceinline void atomic_store_explicit(__global volatile atomic_int* target, int val, const memory_order mo, const memory_scope ms) {
 
     //asm volatile ("membar.gl;\n");
   
@@ -39,7 +39,7 @@ void atomic_store_explicit(__global volatile atomic_int* target, int val, const 
 }
 
 //This is atomic_load_explict(v, memory_order_relaxed, memory_scope_device)
-int atomic_load_explicit(__global volatile atomic_int* target, const memory_order mo, const memory_scope ms) {
+__forceinline int atomic_load_explicit(__global volatile atomic_int* target, const memory_order mo, const memory_scope ms) {
   int ret = 0;
   
   ret = *target;
@@ -62,3 +62,5 @@ int atomic_exchange_explicit(__global volatile atomic_int* target, const int des
 
   return old;
 }
+
+#endif

@@ -1,5 +1,3 @@
-//#include "testing_common.h"
-
 __kernel void litmus_test(
   __global atomic_uint *ga /* global, atomic locations */,
   __global int *gn /* global, non-atomic locations */,
@@ -14,18 +12,18 @@ __kernel void litmus_test(
   int lid = get_local_id(0);
   int wgid = get_group_id(0);
 
-  if (TEST_THREAD_0 || TEST_THREAD_1 || TESTING_WARP) {
-    if (TEST_THREAD_0) {
+  if (TEST_THREAD(0,0) || TEST_THREAD(0,1) || TESTING_WARP(0,0) || TESTING_WARP(0,1)) {
+    if (TEST_THREAD(0,0)) {
       // Work-item 0 in workgroup 0:
-      test_barrier(&(ga[3]));
+      test_barrier(&(ga[3]),2);
       //atomic_fetch_add(&out[0], 1);
       int tmp1 = atomic_load_explicit(&ga[y_loc], memory_order_relaxed, memory_scope_device);
       int tmp2 = atomic_load_explicit(&ga[x_loc], memory_order_relaxed, memory_scope_device);
       out[0] = tmp1;
       out[1] = tmp2;
-    } else if (TEST_THREAD_1) {
+    } else if (TEST_THREAD(0,1)) {
       // Work-item 0 in workgroup 1:
-      test_barrier(&(ga[3]));
+      test_barrier(&(ga[3]), 2);
       //atomic_fetch_add(&out[1], 1);
       atomic_store_explicit(&ga[x_loc], 1, memory_order_relaxed, memory_scope_device);
       atomic_store_explicit(&ga[y_loc], 1, memory_order_relaxed, memory_scope_device);
