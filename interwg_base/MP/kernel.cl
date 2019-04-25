@@ -33,11 +33,40 @@ __kernel void litmus_test(
     // Stress
     for (int i = 0; i < STRESS_ITERATIONS; i++ ) {
       switch(STRESS_PATTERN){
+	// st st
+      case 0:
+	{
+	scratchpad[scratch_location] = i;
+	scratchpad[scratch_location] = i + 1;
+	break;
+	}
+	//ld ld
+      case 1:
+	{
+	int tmp3 = scratchpad[scratch_location];
+	int tmp4 = scratchpad[scratch_location];
+	if (tmp3 < 0) {
+	}
+	if (tmp4 < 0) {
+	}
+	break;
+	}
+      case 2:
+	{
+	int tmp1 = scratchpad[scratch_location];
+	scratchpad[scratch_location] = i;
+	if (tmp1 < 0) {
+	}
+	break;
+	}
+	// st ld
       default:
+	{
 	scratchpad[scratch_location] = i;
 	int tmp = scratchpad[scratch_location];
 	if (tmp < 0)
-	  break;   
+	  break;
+	}   
       }   
     }
 

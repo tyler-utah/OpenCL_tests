@@ -39,5 +39,5 @@
 #endif
 
 #ifndef STRESS_PATTERN
-#define STRESS_PATTERN 0
+#define STRESS_PATTERN 3
 #endif
