@@ -4,6 +4,7 @@ __kernel void litmus_test(
   __global int *out /* output */,
   __global int *shuffled_ids,
   volatile __global int *scratchpad,
+  __global int *bar,
   int scratch_location, // increment by 2
   int x_loc,
   int y_loc,
@@ -15,7 +16,7 @@ __kernel void litmus_test(
   if (TEST_THREAD(0,0) || TEST_THREAD(0,1) || TESTING_WARP(0,0) || TESTING_WARP(0,1)) {
     if (TEST_THREAD(0,0)) {
       // Work-item 0 in workgroup 0:
-      test_barrier(&(ga[3]),2);
+      test_barrier(&(bar[0]),2);
       //atomic_fetch_add(&out[0], 1);
       int tmp1 = atomic_load_explicit(&ga[y_loc], memory_order_relaxed, memory_scope_device);
       int tmp2 = atomic_load_explicit(&ga[x_loc], memory_order_relaxed, memory_scope_device);
@@ -23,7 +24,7 @@ __kernel void litmus_test(
       out[1] = tmp2;
     } else if (TEST_THREAD(0,1)) {
       // Work-item 0 in workgroup 1:
-      test_barrier(&(ga[3]), 2);
+      test_barrier(&(bar[0]), 2);
       //atomic_fetch_add(&out[1], 1);
       atomic_store_explicit(&ga[x_loc], 1, memory_order_relaxed, memory_scope_device);
       atomic_store_explicit(&ga[y_loc], 1, memory_order_relaxed, memory_scope_device);
