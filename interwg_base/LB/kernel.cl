@@ -14,6 +14,47 @@ __kernel void litmus_test(
   int wgid = get_group_id(0);
   
   if (TEST_THREAD(0,0) || TEST_THREAD(0,1) || TESTING_WARP(0,0) || TESTING_WARP(0,1)) {
+    if (PRE_STRESS) {
+      // Stress
+      for (int i = 0; i < PRE_STRESS_ITERATIONS; i++ ) {
+	switch(PRE_STRESS_PATTERN){
+	  // st st
+	case 0:
+	  {
+	    scratchpad[scratch_location] = i;
+	    scratchpad[scratch_location] = i + 1;
+	    break;
+	  }
+	//ld ld
+	case 1:
+	  {
+	    int tmp3 = scratchpad[scratch_location];
+	    int tmp4 = scratchpad[scratch_location];
+	    if (tmp3 < 0) {
+	    }
+	    if (tmp4 < 0) {
+	    }
+	    break;
+	  }
+	case 2:
+	  {
+	    int tmp1 = scratchpad[scratch_location];
+	    scratchpad[scratch_location] = i;
+	    if (tmp1 < 0) {
+	    }
+	    break;
+	  }
+	  // st ld
+	default:
+	  {
+	    scratchpad[scratch_location] = i;
+	    int tmp = scratchpad[scratch_location];
+	    if (tmp < 0)
+	      break;
+	  }   
+	}   
+      }
+    }
     if (TEST_THREAD(0,0)) {
       // Work-item 0 in workgroup 0:
       test_barrier(&(bar[0]), 2);

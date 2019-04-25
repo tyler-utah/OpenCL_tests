@@ -34,6 +34,18 @@
 #define MEM_STRESS 0
 #endif
 
+#ifndef PRE_STRESS
+#define PRE_STRESS 0
+#endif
+
+#ifndef PRE_STRESS_ITERATIONS
+#define PRE_STRESS_ITERATIONS 100
+#endif
+
+#ifndef PRE_STRESS_PATTERN
+#define PRE_STRESS_PATTERN 3
+#endif
+
 #ifndef STRESS_ITERATIONS
 #define STRESS_ITERATIONS 512
 #endif
