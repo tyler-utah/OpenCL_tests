@@ -5,7 +5,7 @@ __kernel void litmus_test(
   __global int *shuffled_ids,
   volatile __global int *scratchpad,
   __global int *bar,
-  int scratch_location, // increment by 2
+  __global int *scratch_locations,
   int x_loc,
   int y_loc,
   int dwarp_size
@@ -21,15 +21,15 @@ __kernel void litmus_test(
 	  // st st
 	case 0:
 	  {
-	    scratchpad[scratch_location] = i;
-	    scratchpad[scratch_location] = i + 1;
+	    scratchpad[SCRATCH_LOC + lid] = i;
+	    scratchpad[SCRATCH_LOC + lid] = i + 1;
 	    break;
 	  }
 	//ld ld
 	case 1:
 	  {
-	    int tmp3 = scratchpad[scratch_location];
-	    int tmp4 = scratchpad[scratch_location];
+	    int tmp3 = scratchpad[SCRATCH_LOC + lid];
+	    int tmp4 = scratchpad[SCRATCH_LOC + lid];
 	    if (tmp3 < 0) {
 	    }
 	    if (tmp4 < 0) {
@@ -38,8 +38,8 @@ __kernel void litmus_test(
 	  }
 	case 2:
 	  {
-	    int tmp1 = scratchpad[scratch_location];
-	    scratchpad[scratch_location] = i;
+	    int tmp1 = scratchpad[SCRATCH_LOC + lid];
+	    scratchpad[SCRATCH_LOC + lid] = i;
 	    if (tmp1 < 0) {
 	    }
 	    break;
@@ -47,8 +47,8 @@ __kernel void litmus_test(
 	  // st ld
 	default:
 	  {
-	    scratchpad[scratch_location] = i;
-	    int tmp = scratchpad[scratch_location];
+	    scratchpad[SCRATCH_LOC + lid] = i;
+	    int tmp = scratchpad[SCRATCH_LOC + lid];
 	    if (tmp < 0)
 	      break;
 	  }   
@@ -70,6 +70,8 @@ __kernel void litmus_test(
       //atomic_fetch_add(&out[1], 1);
       atomic_store_explicit(&ga[x_loc], 1, memory_order_relaxed, memory_scope_device);
       atomic_store_explicit(&ga[y_loc], 1, memory_order_relaxed, memory_scope_device);
+      //atomic_fetch_add(&ga[x_loc], 1);
+      //atomic_fetch_add(&ga[y_loc], 1);
     }
   }
   else if (MEM_STRESS) {
@@ -79,15 +81,15 @@ __kernel void litmus_test(
 	// st st
       case 0:
 	{
-	scratchpad[scratch_location] = i;
-	scratchpad[scratch_location] = i + 1;
+	scratchpad[SCRATCH_LOC + lid] = i;
+	scratchpad[SCRATCH_LOC + lid] = i + 1;
 	break;
 	}
 	//ld ld
       case 1:
 	{
-	int tmp3 = scratchpad[scratch_location];
-	int tmp4 = scratchpad[scratch_location];
+	int tmp3 = scratchpad[SCRATCH_LOC + lid];
+	int tmp4 = scratchpad[SCRATCH_LOC + lid];
 	if (tmp3 < 0) {
 	}
 	if (tmp4 < 0) {
@@ -96,8 +98,8 @@ __kernel void litmus_test(
 	}
       case 2:
 	{
-	int tmp1 = scratchpad[scratch_location];
-	scratchpad[scratch_location] = i;
+	int tmp1 = scratchpad[SCRATCH_LOC + lid];
+	scratchpad[SCRATCH_LOC + lid] = i;
 	if (tmp1 < 0) {
 	}
 	break;
@@ -105,8 +107,8 @@ __kernel void litmus_test(
 	// st ld
       default:
 	{
-	scratchpad[scratch_location] = i;
-	int tmp = scratchpad[scratch_location];
+	scratchpad[SCRATCH_LOC + lid] = i;
+	int tmp = scratchpad[SCRATCH_LOC + lid];
 	if (tmp < 0)
 	  break;
 	}   

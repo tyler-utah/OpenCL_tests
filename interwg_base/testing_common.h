@@ -1,21 +1,24 @@
 #ifdef BARRIER
   void test_barrier(__global atomic_int *x, int num_threads) {
-    int max_iters = 1000;
-    int iters = 0;
-    int val = atomic_fetch_add_explicit(x, 1, memory_order_relaxed, memory_scope_device);
-    while (iters < max_iters && val != num_threads) {
-      val = atomic_load_explicit(x, memory_order_relaxed, memory_scope_device);
-      iters += 1;
+    if (BARRIER == 1) {
+      int max_iters = 1000;
+      int iters = 0;
+      int val = atomic_fetch_add_explicit(x, 1, memory_order_relaxed, memory_scope_device);
+      while (iters < max_iters && val != num_threads) {
+	val = atomic_load_explicit(x, memory_order_relaxed, memory_scope_device);
+	iters += 1;
+      }
+      return;
     }
-    return;
   }
 #else
-  void test_barrier(__global atomic_int *x, int num_threads) {
-    return;
-  }
+void test_barrier(__global atomic_int *x, int num_threads) {
+  return;
+}
 #endif
 
 #ifdef ID_SHUFFLE
+#if ID_SHUFFLE == 1
 #define TEST_THREAD(l,w) (shuffled_ids[get_global_id(0)] == get_local_size(0) * w + (l * dwarp_size))
 #define SHUFFLED_WIG (shuffled_ids[get_global_id(0)]/get_local_size(0))
 #define SHUFFLED_LID (shuffled_ids[get_global_id(0)] % get_local_size(0))
@@ -25,10 +28,20 @@
 #define TEST_THREAD_1 (shuffled_ids[get_global_id(0)] == get_local_size(0) * 1)
 #define TEST_THREAD_2 (shuffled_ids[get_global_id(0)] == get_local_size(0) * 2)
 #define TEST_THREAD_3 (shuffled_ids[get_global_id(0)] == get_local_size(0) * 3)
+
 #else
 #define TEST_THREAD(l, w) (lid == l && wgid == w)
 #define TESTING_WARP(l, w) (wgid == w && (lid/dwarp_size == l/dwarp_size))
-#endif 
+#endif
+
+#else
+#define TEST_THREAD(l, w) (lid == l && wgid == w)
+#define TESTING_WARP(l, w) (wgid == w && (lid/dwarp_size == l/dwarp_size))
+#endif
+
+#ifndef SCRATCH_LOC
+#define SCRATCH_LOC (scratch_locations[get_global_id(0)])
+#endif
 
 #ifndef MEM_STRESS
 #define MEM_STRESS 0
