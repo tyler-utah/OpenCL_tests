@@ -122,13 +122,13 @@ __kernel void check_outputs(__global int *output, __global int *result, __global
     if (r1 == 1 && x == 1) {
       *result = 0;
     }
-    else if (r1 == 0 && y == 2) {
+    else if (r1 == 0 && x == 2) {
       *result = 1;
     }
-    else if (r1 == 0 && y == 1) {
+    else if (r1 == 0 && x == 1) {
       *result = 2;
     }
-    else if (r1 == 1 && y == 2) {
+    else if (r1 == 1 && x == 2) {
       *result = 3;
     }
     else {
