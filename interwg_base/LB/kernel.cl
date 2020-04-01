@@ -116,7 +116,7 @@ __kernel void litmus_test(
 
 
 
-__kernel void check_outputs(__global int *output, __global int *result) {
+__kernel void check_outputs(__global int *output, __global int *result, __global int* ga, int x_loc, int y_loc) {
   
   if (get_global_id(0) == 0) {
     int r1 = output[0];
