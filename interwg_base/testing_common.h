@@ -55,6 +55,49 @@ void test_barrier(__global atomic_int *x, int num_threads) {
 #define PRE_STRESS_ITERATIONS 100
 #endif
 
+// Case 0 is st st
+// Case 1 is ld ld
+// Case 2 is ld st
+// Case 3 is st ld
+
+#define PRE_STRESS_ITER \
+  	switch(PRE_STRESS_PATTERN){ \
+	case 0:\
+	  { \
+	    scratchpad[SCRATCH_LOC + lid] = i; \
+	    scratchpad[SCRATCH_LOC + lid] = i + 1; \
+	    break; \
+	  } \
+	case 1: \
+	  { \
+	    int tmp3 = scratchpad[SCRATCH_LOC + lid]; \
+	    int tmp4 = scratchpad[SCRATCH_LOC + lid]; \
+	    if (tmp3 < 0 && tmp4 < 0) { \
+	      scratchpad[SCRATCH_LOC + lid] = lid; \
+	    } \
+	    break; \
+	  } \
+	case 2: \
+	  { \
+	    int tmp1 = scratchpad[SCRATCH_LOC + lid]; \
+	    scratchpad[SCRATCH_LOC + lid] = i; \
+	    if (tmp1 < 0) { \
+	      scratchpad[SCRATCH_LOC + lid] = lid; \
+	    } \
+	    break; \
+	  } \
+	default: \
+	  { \
+	    scratchpad[SCRATCH_LOC + lid] = i; \
+	    int tmp = scratchpad[SCRATCH_LOC + lid]; \
+	    if (tmp < 0) {\
+	      scratchpad[SCRATCH_LOC + lid] = lid; \
+	    } \
+	      break; \
+	  } \
+	  }
+
+
 #ifndef PRE_STRESS_PATTERN
 #define PRE_STRESS_PATTERN 3
 #endif
@@ -62,6 +105,48 @@ void test_barrier(__global atomic_int *x, int num_threads) {
 #ifndef STRESS_ITERATIONS
 #define STRESS_ITERATIONS 512
 #endif
+
+// Case 0 is st st
+// Case 1 is ld ld
+// Case 2 is ld st
+// Case 3 is st ld
+
+#define MEM_STRESS_ITER  \
+ switch(STRESS_PATTERN){\
+      case 0: \
+	{ \
+	scratchpad[SCRATCH_LOC + lid] = i; \
+	scratchpad[SCRATCH_LOC + lid] = i + 1; \
+	break; \
+	} \
+      case 1: \
+	{ \
+	int tmp3 = scratchpad[SCRATCH_LOC + lid]; \
+	int tmp4 = scratchpad[SCRATCH_LOC + lid]; \
+	if (tmp3 < 0 && tmp4 < 0) { \
+	  scratchpad[SCRATCH_LOC + lid] = lid; \
+	} \
+	break; \
+	}      \
+      case 2: \
+	{ \
+	int tmp1 = scratchpad[SCRATCH_LOC + lid]; \
+	scratchpad[SCRATCH_LOC + lid] = i; \
+	if (tmp1 < 0) { \
+	  scratchpad[SCRATCH_LOC + lid] = lid; \
+	} \
+	break; \
+	} \
+      default: \
+	{ \
+	scratchpad[SCRATCH_LOC + lid] = i; \
+	int tmp = scratchpad[SCRATCH_LOC + lid]; \
+	if (tmp < 0) { \
+	  scratchpad[SCRATCH_LOC + lid] = lid; \
+	}\
+	  break; \
+	}\
+      }
 
 #ifndef STRESS_PATTERN
 #define STRESS_PATTERN 3

@@ -17,42 +17,7 @@ __kernel void litmus_test(
     if (PRE_STRESS) {
       // Stress
       for (int i = 0; i < PRE_STRESS_ITERATIONS; i++ ) {
-	switch(PRE_STRESS_PATTERN){
-	  // st st
-	case 0:
-	  {
-	    scratchpad[SCRATCH_LOC + lid] = i;
-	    scratchpad[SCRATCH_LOC + lid] = i + 1;
-	    break;
-	  }
-	//ld ld
-	case 1:
-	  {
-	    int tmp3 = scratchpad[SCRATCH_LOC + lid];
-	    int tmp4 = scratchpad[SCRATCH_LOC + lid];
-	    if (tmp3 < 0) {
-	    }
-	    if (tmp4 < 0) {
-	    }
-	    break;
-	  }
-	case 2:
-	  {
-	    int tmp1 = scratchpad[SCRATCH_LOC + lid];
-	    scratchpad[SCRATCH_LOC + lid] = i;
-	    if (tmp1 < 0) {
-	    }
-	    break;
-	  }
-	  // st ld
-	default:
-	  {
-	    scratchpad[SCRATCH_LOC + lid] = i;
-	    int tmp = scratchpad[SCRATCH_LOC + lid];
-	    if (tmp < 0)
-	      break;
-	  }   
-	}   
+	PRE_STRESS_ITER;
       }
     }
 
@@ -77,44 +42,8 @@ __kernel void litmus_test(
   else if (MEM_STRESS) {
     // Stress
     for (int i = 0; i < STRESS_ITERATIONS; i++ ) {
-      switch(STRESS_PATTERN){
-	// st st
-      case 0:
-	{
-	scratchpad[SCRATCH_LOC + lid] = i;
-	scratchpad[SCRATCH_LOC + lid] = i + 1;
-	break;
-	}
-	//ld ld
-      case 1:
-	{
-	int tmp3 = scratchpad[SCRATCH_LOC + lid];
-	int tmp4 = scratchpad[SCRATCH_LOC + lid];
-	if (tmp3 < 0) {
-	}
-	if (tmp4 < 0) {
-	}
-	break;
-	}
-      case 2:
-	{
-	int tmp1 = scratchpad[SCRATCH_LOC + lid];
-	scratchpad[SCRATCH_LOC + lid] = i;
-	if (tmp1 < 0) {
-	}
-	break;
-	}
-	// st ld
-      default:
-	{
-	scratchpad[SCRATCH_LOC + lid] = i;
-	int tmp = scratchpad[SCRATCH_LOC + lid];
-	if (tmp < 0)
-	  break;
-	}   
-      }   
-    }
-
+      MEM_STRESS_ITER;
+    }   
   } 
 }
 
