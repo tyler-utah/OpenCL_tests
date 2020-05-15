@@ -24,15 +24,15 @@ __kernel void litmus_test(
       // Work-item 0 in workgroup 0:
       test_barrier(&(bar[0]), 2);
       //atomic_fetch_add(&out[0], 1);
-      atomic_store_explicit_seq_cst(&ga[x_loc], 1);
-      int tmp1 = atomic_load_explicit_seq_cst(&ga[y_loc]);
+      nv_atomic_store_explicit_seq_cst(&ga[x_loc], 1);
+      int tmp1 = nv_atomic_load_explicit_seq_cst(&ga[y_loc]);
       out[0] = tmp1;
     } else if (TEST_THREAD(0,1)) {
       // Work-item 0 in workgroup 1:
       test_barrier(&(bar[0]), 2);
       //atomic_fetch_add(&out[1], 1);
-      atomic_store_explicit_seq_cst(&ga[y_loc], 1);
-      int tmp2 = atomic_load_explicit_seq_cst(&ga[x_loc]);
+      nv_atomic_store_explicit_seq_cst(&ga[y_loc], 1);
+      int tmp2 = nv_atomic_load_explicit_seq_cst(&ga[x_loc]);
       out[1] = tmp2;
     }
   }

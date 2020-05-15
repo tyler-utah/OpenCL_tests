@@ -30,22 +30,22 @@ int atomic_fetch_add_explicit(__global volatile atomic_int* target, int operand,
   return ret;  
 }
 
-__forceinline void atomic_store_explicit_seq_cst(__global volatile atomic_int* target, int val) {
+__forceinline void nv_atomic_store_explicit_seq_cst(__global volatile atomic_int* target, int val) {
   asm volatile ("membar.gl;\n");
   *target = val;
   asm volatile ("membar.gl;\n");
 }
 
-__forceinline void atomic_store_explicit_release(__global volatile atomic_int* target, int val) {
+__forceinline void nv_atomic_store_explicit_release(__global volatile atomic_int* target, int val) {
   asm volatile ("membar.gl;\n");
   *target = val;
 }
 
-__forceinline void atomic_store_explicit_relaxed(__global volatile atomic_int* target, int val) {
+__forceinline void nv_atomic_store_explicit_relaxed(__global volatile atomic_int* target, int val) {
     *target = val;
 }
 
-__forceinline int atomic_load_explicit_seq_cst(__global volatile atomic_int* target) {
+__forceinline int nv_atomic_load_explicit_seq_cst(__global volatile atomic_int* target) {
   int ret;
   asm volatile ("membar.gl;\n");
   ret = *target;
@@ -54,7 +54,7 @@ __forceinline int atomic_load_explicit_seq_cst(__global volatile atomic_int* tar
 }
 
 
-__forceinline int atomic_load_explicit_acquire(__global volatile atomic_int* target) {
+__forceinline int nv_atomic_load_explicit_acquire(__global volatile atomic_int* target) {
   int ret;
   ret = *target;
   asm volatile ("membar.gl;\n");
@@ -62,7 +62,7 @@ __forceinline int atomic_load_explicit_acquire(__global volatile atomic_int* tar
 }
 
 
-__forceinline int atomic_load_explicit_relaxed(__global volatile atomic_int* target) {
+__forceinline int nv_atomic_load_explicit_relaxed(__global volatile atomic_int* target) {
   int ret;
   ret = *target;
   return ret;  
