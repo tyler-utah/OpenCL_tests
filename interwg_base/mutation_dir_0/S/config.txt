@@ -1,0 +1,9 @@
+S
+results
+4
+r1 = 1 && x = 1  : 
+r1 = 0 && x = 2  : 
+r1 = 0 && x = 1  : 
+*r1 = 1 && x = 2 : 
+num outputs
+2
