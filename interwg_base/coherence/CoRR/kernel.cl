@@ -58,10 +58,10 @@ __kernel void check_outputs(__global int *output, __global int *result, __global
     else if (r1 == 1 && r2 == 1) {
       *result = 1;
     }
-    else if (r1 == 1 && r2 == 0) {
+    else if (r1 == 0 && r2 == 1) {
       *result = 2;
     }
-    else if (r1 == 0 && r2 == 1) {
+    else if (r1 == 1 && r2 == 0) {
       *result = 3;
     }
     else {
